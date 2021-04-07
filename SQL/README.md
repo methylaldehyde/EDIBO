@@ -37,6 +37,8 @@ Lai redzētu datubāzes uzbūves shēmu
 ```
 Lai redzētu pieejamās tabulas
 
+# SQLite3 piemēra datubāzes pārnese uz MySQL
+
 
 # MySQL
 servera bāzēta failu datubāžu menedžmenta sistēma
@@ -68,8 +70,25 @@ ADD PRIMARY KEY(column_list);
 *foreign key* ir ierobežojums, kolonna vai grupa kolonnu, kas liedz darbības, kas izjauktu saiknes starp tabulām. Tas ir lauks tabulā, kas atsaucas uz primary key citā tabulā, veidojot savstarpējās atsauces un saglabājot atsauču integritāti. Foreign key var definēt izmantojot ```CREATE TABLE``` un ```ALTER TABLE``` apgalvojumus.
 
 *trigger* ir datubāzes objekts ar nosaukumu, kas ir asociēts ar tabulu, un tas tiek aktivēts, kad sevišķš notikums noris šajā tabulā.
+trigger piemērs:
+```
+SELECT 'CREATE TRIGGER before_insert_Artists_only_unique_values' AS '';
+DELIMITER $$
+CREATE TRIGGER before_insert_Artists_only_unique_values
+     BEFORE INSERT ON Artists FOR EACH ROW
+     BEGIN
+          IF NEW.Name IN (SELECT Name FROM Artists) THEN
+               SIGNAL SQLSTATE '45000'
+                    SET MESSAGE_TEXT = 'Iearakstu nevar izveidot - tāds izpildītājs jau eksistē!';
+          END IF;
+     END;$$
+DELIMITER ;
+#DROP TRIGGER before_insert_Artists_only_unique_values;
+```
+Parūpējas par ierakstu attiecīgajā tabulā (Artists) unikalitāti šajā piemērā. Šādā veidā var kontrolēt DELETE, INSERT, UPDATE darbības veicot ar trigger konkrētajiem nosacījumiem.
 
 
 *function*
+[MySQL funkciju reference](https://dev.mysql.com/doc/refman/8.0/en/sql-function-reference.html)
 
-*procedure*
+*procedure* MySQL procedūrai ir vārds, parametru saraksts un SQL nosacījumi.
