@@ -187,7 +187,7 @@ ul
 { font-size:14px;}
 }
 .clearfix:after {
-   content: " "; /* Older browser do not support empty content */
+   content: " "; 
    visibility: hidden;
    display: block;
    height: 0;
