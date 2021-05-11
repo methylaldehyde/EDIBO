@@ -1,0 +1,60 @@
+body {
+  background-color: rgb(130, 176, 216);
+  background-image: url(https://i.imgur.com/vKFlBbC.jpg);
+  font-size: 2em;
+  white-space: pre-line;
+
+  font-family: "Unica One", sans-serif;
+  font-size: 40px;
+}
+
+.ez-header-2 {
+  color: red;
+  font-size: 5em;
+}
+
+h1 {
+  text-align: center;
+  background: -webkit-linear-gradient(rgb(110, 59, 81), rgb(224, 75, 204));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h3 {
+  text-align: center;
+  background: -webkit-linear-gradient(rgb(91, 9, 138), rgb(224, 75, 204));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn {
+  margin: 9px;
+  display: flex;
+  justify-content: center;
+  border: 2px;
+  color: rgb(87, 42, 87);
+  padding: 30px;
+  border-radius: 20px;
+  transition-duration: 0.7s;
+  transition-property: all;
+}
+
+.btn:hover {
+  background-color: rgb(87, 42, 87);
+  color: white;
+}
+
+#buttons {
+  display: flex;
+  justify-content: center;
+  text-decoration-color: purple;
+  background-color: rgb(216, 112, 147);
+  opacity: 40%;
+}
+
+#vietas {
+  text-align: center;
+  background: -webkit-linear-gradient(rgb(91, 9, 138), rgb(224, 75, 204));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
