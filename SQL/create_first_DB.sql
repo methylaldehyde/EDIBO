@@ -1,34 +1,29 @@
-create database world;
+create database world2;
+
 use world;
- CREATE TABLE IF NOT EXISTS Artists
-(
-   pKArtistId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    Name NVARCHAR(120) NULL
-);
+
+CREATE TABLE IF NOT EXISTS Artists
+(   pkArtistId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Name NVARCHAR(120) NULL);
 
 insert into Artists(Name) values("First Artist");
 insert into Artists(Name) values('Second Artist');
 
 UPDATE artists SET Name = 'Second One One Artist' WHERE (pKArtistId = 2);
 
-
  CREATE TABLE IF NOT EXISTS Albums
-(
-    pkAlbumId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+(    pkAlbumId INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     Title NVARCHAR(160)  NOT NULL,
     fkArtistId INT NOT NULL,
-    FOREIGN KEY (fkArtistId) REFERENCES artists (pkArtistId)
-    ON DELETE NO ACTION ON UPDATE NO ACTION);
-    
-  
+    CONSTRAINT FK_ArtistId_Albums FOREIGN KEY (fkArtistId) REFERENCES artists (pkArtistId)
+    ON DELETE NO ACTION ON UPDATE NO ACTION);  
 
 CREATE TABLE IF NOT EXISTS Employees
-(
-    pkEmployeeId INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
+(   pkEmployeeId INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
     LastName NVARCHAR(20)  NOT NULL,
     FirstName NVARCHAR(20)  NOT NULL,
     Title NVARCHAR(30),
-    ReportsTo INTEGER,
+    skReportsTo INTEGER NOT NULL,
     BirthDate DATETIME,
     HireDate DATETIME,
     Address NVARCHAR(70),
@@ -39,22 +34,16 @@ CREATE TABLE IF NOT EXISTS Employees
     Phone NVARCHAR(24),
 	Fax NVARCHAR(24),
     Email NVARCHAR(60),
-    FOREIGN KEY (ReportsTo) REFERENCES Employees (pkEmployeeId) 
-        ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-
+    CONSTRAINT SK_EmployeeId_Employees FOREIGN KEY (skReportsTo) REFERENCES Employees (pkEmployeeId) 
+        ON DELETE NO ACTION ON UPDATE NO ACTION);
 
 CREATE TABLE IF NOT EXISTS Genres
-(
-    pkGenreId INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
+(    pkGenreId INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
     Name NVARCHAR(120)
 );
 
-
 CREATE TABLE IF NOT EXISTS Customers
-(
-    pkCustomerId INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
+(   pkCustomerId INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
     FirstName NVARCHAR(40)  NOT NULL,
     LastName NVARCHAR(20)  NOT NULL,
     Company NVARCHAR(80),
@@ -66,16 +55,13 @@ CREATE TABLE IF NOT EXISTS Customers
     Phone NVARCHAR(24),
     Fax NVARCHAR(24),
     Email NVARCHAR(60)  NOT NULL,
-    SupportRepId INTEGER,
-    FOREIGN KEY (SupportRepId) REFERENCES Employees (pkEmployeeId) 
-        ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
+    fkSupportRepId INTEGER NOT NULL,
+    CONSTRAINT FK_SupportRepId_Customers FOREIGN KEY (fkSupportRepId) REFERENCES Employees(pkEmployeeId) 
+        ON DELETE NO ACTION ON UPDATE NO ACTION);
 
 CREATE TABLE IF NOT EXISTS Invoices
-(
-    pkInvoiceId INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    CustomerId INTEGER  NOT NULL,
+(   pkInvoiceId INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    fkCustomerId INTEGER  NOT NULL,
     InvoiceDate DATETIME  NOT NULL,
     BillingAddress NVARCHAR(70),
     BillingCity NVARCHAR(40),
@@ -83,7 +69,7 @@ CREATE TABLE IF NOT EXISTS Invoices
     BillingCountry NVARCHAR(40),
     BillingPostalCode NVARCHAR(10),
     Total NUMERIC(10,2)  NOT NULL,
-    FOREIGN KEY (CustomerId) REFERENCES Customers (pkCustomerId) 
+    CONSTRAINT FK_CustomerId_Invoices FOREIGN KEY (fkCustomerId) REFERENCES Customers (pkCustomerId) 
         ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
@@ -94,7 +80,7 @@ CREATE TABLE IF NOT EXISTS Media_types
     Name NVARCHAR(120)
 );
 
-/*
+
 CREATE TABLE IF NOT EXISTS Playlists
 (
     pkPlaylistId INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -102,34 +88,48 @@ CREATE TABLE IF NOT EXISTS Playlists
 );
 
 CREATE TABLE IF NOT EXISTS Tracks
-(
-    pkTrackId INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
+(   pkTrackId INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
     Name NVARCHAR(200)  NOT NULL,
-    pkAlbumId INTEGER,
-    MediaTypeId INTEGER  NOT NULL,
-    GenreId INTEGER,
+    fkAlbumId INTEGER NOT NULL,
+    fkMediaTypeId INTEGER  NOT NULL,
+    fkGenreId INTEGER NOT NULL,
     Composer NVARCHAR(220),
     Milliseconds INTEGER  NOT NULL,
     Bytes INTEGER,
     UnitPrice NUMERIC(10,2)  NOT NULL,
-    FOREIGN KEY (pkAlbumId) REFERENCES Albums (pkAlbumId) 
+    CONSTRAINT FK_AlbumId_Tracks FOREIGN KEY (fkAlbumId) REFERENCES Albums (pkAlbumId) 
         ON DELETE NO ACTION ON UPDATE NO ACTION,
-    FOREIGN KEY (GenreId) REFERENCES Genres (pkGenreId) 
+    CONSTRAINT FK_GenreId_Tracks FOREIGN KEY (fkGenreId) REFERENCES Genres (pkGenreId) 
         ON DELETE NO ACTION ON UPDATE NO ACTION,
-    FOREIGN KEY (MediaTypeId) REFERENCES Media_types (pkMediaTypeId) 
+    CONSTRAINT FK_MediaTypeId_Tracks FOREIGN KEY (fkMediaTypeId) REFERENCES Media_types (pkMediaTypeId) 
         ON DELETE NO ACTION ON UPDATE NO ACTION
 );
-
 
 CREATE TABLE IF NOT EXISTS Invoice_items
-(
-    pkInvoiceLineId INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    InvoiceId INTEGER  NOT NULL,
-    TrackId INTEGER  NOT NULL,
+(   pkInvoiceLineId INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    fkInvoiceId INTEGER  NOT NULL,
+    fkTrackId INTEGER  NOT NULL,
     UnitPrice NUMERIC(10,2)  NOT NULL,
     Quantity INTEGER  NOT NULL,
-    FOREIGN KEY (InvoiceId) REFERENCES Invoices (pkInvoiceId) 
+    CONSTRAINT FK_InvoiceId_Invoice_items FOREIGN KEY (fkInvoiceId) REFERENCES Invoices (pkInvoiceId) 
         ON DELETE NO ACTION ON UPDATE NO ACTION,
-    FOREIGN KEY (TrackId) REFERENCES Tracks (pkTrackId) 
-        ON DELETE NO ACTION ON UPDATE NO ACTION
-);
+    CONSTRAINT FK_TrackId_Invoice_items FOREIGN KEY (fkTrackId) REFERENCES Tracks (pkTrackId) 
+        ON DELETE NO ACTION ON UPDATE NO ACTION);
+        
+        
+CREATE TABLE IF NOT EXISTS `world1`.`playlist_track` (
+  `playlists_pkPlaylistId` INT NOT NULL,
+  `tracks_pkTrackId` INT NOT NULL,
+  PRIMARY KEY (`playlists_pkPlaylistId`, `tracks_pkTrackId`),
+  INDEX `fk_playlist_track_tracks1_idx` (`tracks_pkTrackId` ASC) VISIBLE,
+  CONSTRAINT `fk_playlist_track_playlists1`
+    FOREIGN KEY (`playlists_pkPlaylistId`)
+    REFERENCES `world1`.`playlists` (`pkPlaylistId`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_playlist_track_tracks1`
+    FOREIGN KEY (`tracks_pkTrackId`)
+    REFERENCES `world1`.`tracks` (`pkTrackId`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
